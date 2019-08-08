@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom'
 import PageWrapper from './PageWrapper'
 
 import { getItem } from './localstorage'
-import { button } from './common-styles'
+import { inputGray, buttonYellow, button } from './common-styles'
 
 class ReservationDetails extends Component {
   render() {
@@ -33,8 +33,11 @@ class ReservationDetails extends Component {
           <p>{`${serviceDesc} (${name}, ${title})`}</p>
         </div>
         <div style={styles.buttonWrapper}>
-        <button style={{ ...button, backgroundColor: '#f7f7f7' }}>Takaisin</button>
-          <button style={{ ...button, backgroundColor: '#FFD740' }}>Maksa</button>
+          <button
+            style={{ ...button, backgroundColor: inputGray }}
+            onClick={() => this.props.history.goBack()}
+          >Takaisin</button>
+          <button style={{ ...button, backgroundColor: buttonYellow }}>Maksa</button>
         </div>
       </PageWrapper>
     )

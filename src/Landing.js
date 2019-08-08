@@ -6,6 +6,7 @@ import PageWrapper from './PageWrapper'
 import ProfessionalCard from './ProfessionalCard'
 
 import { setItem } from './localstorage'
+import { inputGray, buttonYellow } from './common-styles'
 
 class Landing extends React.Component {
   gAutoCompleteInterval = null
@@ -115,15 +116,15 @@ class Landing extends React.Component {
     return (
       <PageWrapper>
         <div ref={ref => this.el = ref} style={styles.main}>
-          <select style={{ ...styles.mainFont, ...styles.input }} onChange={this.setService} >
-            <option disabled selected value={service}>Valitse palvelu</option>
+          <select style={{ ...styles.mainFont, ...styles.input }} defaultValue={'default'} onChange={this.setService} >
+            <option disabled value='default'>Valitse palvelu</option>
             <option value='1'>Urheiluhieronta 30min</option>
             <option value='2'>Urheiluhieronta 45min</option>
           </select>
           <input style={{ ...styles.mainFont, ...styles.input }} type='date' value={date} onChange={this.setDate} placeholder='Pvm' />
           <input style={{ ...styles.mainFont, ...styles.input }} type='time' value={time} onChange={this.setTime} placeholder='Aika' />
           <input style={{ ...styles.input, ...styles.mainFont }} id='g-autocomplete' type='text' placeholder='Syötä osoite' />
-          <button style={{ ...styles.button, backgroundColor: this.formIsValid() ? '#FFD740' : '#f7f7f7' }} onClick={this.openList}>Hae</button>
+          <button style={{ ...styles.button, backgroundColor: this.formIsValid() ? buttonYellow : inputGray }} onClick={this.openList}>Hae</button>
           <SlidingPane
             isOpen={professionalListVisible}
             from='bottom'
@@ -162,7 +163,7 @@ const styles = {
   },
   input: {
     border: 'none',
-    backgroundColor: '#f7f7f7',
+    backgroundColor: inputGray,
     height: '2.5em',
     fontSize: '0.85em',
     margin: '2% auto',
