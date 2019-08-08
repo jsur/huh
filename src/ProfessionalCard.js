@@ -18,7 +18,7 @@ const styles = {
   main: {
     border: 'none',
     display: 'flex',
-    height: '100px',
+    height: '110px',
     boxShadow: '8px 10px 15px 0px rgba(0,0,0,0.15)',
     padding: '5%',
     margin: '2% 0'
@@ -29,15 +29,15 @@ const styles = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    height: '100px',
+    maxHeight: '100px',
+    border: 'none',
     width: '100%'
   },
   image: {
     width: '70%',
     height: 'auto',
     maxHeight: '100px',
-    borderRadius: '100px',
-    backgroundColor: 'red'
+    borderRadius: '100px'
   },
   details: {
     display: 'flex',

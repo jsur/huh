@@ -11,6 +11,11 @@ class Landing extends React.Component {
   gAutoCompleteInterval = null
 
   state = {
+    service: '',
+    serviceDesc: '',
+    date: '',
+    time: '',
+    place: '',
     professionalListVisible: false,
     professionals: [
       {
@@ -58,27 +63,67 @@ class Landing extends React.Component {
   initGoogleAutoComplete = () => {
     clearInterval(this.gAutoCompleteInterval)
     const autocomplete = new window.google.maps.places.Autocomplete(document.querySelector('#g-autocomplete'))
-    autocomplete.addListener('place_changed', () => this.setState({ professionalListVisible: true }))
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace()
+      this.setState({ place: place.formatted_address })
+    })
   }
 
   onCardClick = ({ id = '' }) => {
-    setItem('professional', { ...this.state.professionals.find(p => p.id === id) })
+    const { service, serviceDesc, date, time, place } = this.state
+    setItem('inputs', {
+      professional: {
+        ...this.state.professionals.find(p => p.id === id)
+      },
+      service,
+      serviceDesc,
+      date,
+      time,
+      place
+    })
     this.props.history.push('/reservationdetails')
+  }
+
+  setService = (evt) => {
+    const { target } = evt.nativeEvent
+    const idx = target.selectedIndex
+    this.setState({ service: evt.target.value, serviceDesc: target[idx].text })
+  }
+
+  setDate = (evt) => {
+    this.setState({ date: evt.target.value })
+  }
+
+  setTime = (evt) => {
+    console.log('evt.target.value:', evt.target.value)
+    this.setState({ time: evt.target.value })
+  }
+
+  formIsValid = () => {
+    const { service, serviceDesc, date, time, place } = this.state
+    return service && serviceDesc && date && time && place
+  }
+
+  openList = () => {
+    if (this.formIsValid()) {
+      this.setState({ professionalListVisible: true })
+    }
   }
  
   render() {
-    const { professionalListVisible, professionals } = this.state
+    const { service, date, time, professionalListVisible, professionals } = this.state
     return (
       <PageWrapper>
         <div ref={ref => this.el = ref} style={styles.main}>
-          <select style={{ ...styles.mainFont, ...styles.input, paddingLeft: '1%' }} >
-            <option disabled selected value>Valitse palvelu</option>
+          <select style={{ ...styles.mainFont, ...styles.input }} onChange={this.setService} >
+            <option disabled selected value={service}>Valitse palvelu</option>
             <option value='1'>Urheiluhieronta 30min</option>
             <option value='2'>Urheiluhieronta 45min</option>
           </select>
-          <input style={{ ...styles.mainFont, ...styles.input }} type='datetime-local' />
-          { /* <h1 style={styles.header}>Mihin haluat hierojan?</h1> */ }
+          <input style={{ ...styles.mainFont, ...styles.input }} type='date' value={date} onChange={this.setDate} placeholder='Pvm' />
+          <input style={{ ...styles.mainFont, ...styles.input }} type='time' value={time} onChange={this.setTime} placeholder='Aika' />
           <input style={{ ...styles.input, ...styles.mainFont }} id='g-autocomplete' type='text' placeholder='Syötä osoite' />
+          <button style={{ ...styles.button, backgroundColor: this.formIsValid() ? '#FFD740' : '#f7f7f7' }} onClick={this.openList}>Hae</button>
           <SlidingPane
             isOpen={professionalListVisible}
             from='bottom'
@@ -101,9 +146,11 @@ class Landing extends React.Component {
 
 const styles = {
   main: {
+    width: '90%',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    alignSelf: 'center',
     paddingTop: '15%'
   },
   mainFont: {
@@ -119,8 +166,17 @@ const styles = {
     height: '2.5em',
     fontSize: '0.85em',
     margin: '2% auto',
-    width: '80%',
+    width: '100%',
     paddingLeft: '5%'
+  },
+  button: {
+    border: 'none',
+    height: '50px',
+    fontSize: '1em',
+    width: '40%',
+    margin: '2% auto 0 auto',
+    fontFamily: '"Source Sans Pro", sans-serif',
+    fontWeight: 'bold'
   }
 }
 
