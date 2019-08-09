@@ -4,15 +4,16 @@ import Modal from 'react-modal'
 
 import PageWrapper from './PageWrapper'
 import ProfessionalCard from './ProfessionalCard'
+import Button from './Button'
 
-import { setItem } from './localstorage'
-import { inputGray, buttonYellow } from './common-styles'
+import { getItem, setItem } from './localstorage'
+import { input, mainFont } from './common-styles'
 
 class Landing extends React.Component {
   gAutoCompleteInterval = null
 
   state = {
-    service: '',
+    service: 'default',
     serviceDesc: '',
     date: '',
     time: '',
@@ -59,6 +60,11 @@ class Landing extends React.Component {
       }
     }, 50)
     Modal.setAppElement(this.el)
+    const inputs = getItem('inputs')
+    if (inputs) {
+      const { service, serviceDesc, date, time } = inputs
+      this.setState({ service, serviceDesc, date, time })
+    }
   }
 
   initGoogleAutoComplete = () => {
@@ -96,7 +102,6 @@ class Landing extends React.Component {
   }
 
   setTime = (evt) => {
-    console.log('evt.target.value:', evt.target.value)
     this.setState({ time: evt.target.value })
   }
 
@@ -112,19 +117,21 @@ class Landing extends React.Component {
   }
  
   render() {
-    const { service, date, time, professionalListVisible, professionals } = this.state
+    const { date, time, service, professionalListVisible, professionals } = this.state
     return (
       <PageWrapper>
         <div ref={ref => this.el = ref} style={styles.main}>
-          <select style={{ ...styles.mainFont, ...styles.input }} defaultValue={'default'} onChange={this.setService} >
+          <select style={{ ...mainFont, ...input }} value={service} onChange={this.setService} >
             <option disabled value='default'>Valitse palvelu</option>
             <option value='1'>Urheiluhieronta 30min</option>
             <option value='2'>Urheiluhieronta 45min</option>
           </select>
-          <input style={{ ...styles.mainFont, ...styles.input }} type='date' value={date} onChange={this.setDate} placeholder='Pvm' />
-          <input style={{ ...styles.mainFont, ...styles.input }} type='time' value={time} onChange={this.setTime} placeholder='Aika' />
-          <input style={{ ...styles.input, ...styles.mainFont }} id='g-autocomplete' type='text' placeholder='Syötä osoite' />
-          <button style={{ ...styles.button, backgroundColor: this.formIsValid() ? buttonYellow : inputGray }} onClick={this.openList}>Hae</button>
+          <input style={{ ...mainFont, ...input }} type='date' value={date} onChange={this.setDate} placeholder='Pvm' />
+          <input style={{ ...mainFont, ...input }} type='time' value={time} onChange={this.setTime} placeholder='Aika' />
+          <input style={{ ...input, ...mainFont }} id='g-autocomplete' type='text' placeholder='Syötä osoite' />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '2.5%' }}>
+            <Button text='Hae' disabled={!this.formIsValid()} onClick={this.openList} />
+          </div>
           <SlidingPane
             isOpen={professionalListVisible}
             from='bottom'
@@ -153,31 +160,6 @@ const styles = {
     flexDirection: 'column',
     alignSelf: 'center',
     paddingTop: '15%'
-  },
-  mainFont: {
-    fontFamily: 'Space Mono'
-  },
-  header: {
-    textAlign: 'center',
-    fontSize: '1.25em'
-  },
-  input: {
-    border: 'none',
-    backgroundColor: inputGray,
-    height: '2.5em',
-    fontSize: '0.85em',
-    margin: '2% auto',
-    width: '100%',
-    paddingLeft: '5%'
-  },
-  button: {
-    border: 'none',
-    height: '50px',
-    fontSize: '1em',
-    width: '40%',
-    margin: '2% auto 0 auto',
-    fontFamily: '"Source Sans Pro", sans-serif',
-    fontWeight: 'bold'
   }
 }
 
